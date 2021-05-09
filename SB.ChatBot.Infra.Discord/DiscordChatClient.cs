@@ -14,14 +14,16 @@
 
         private SocketGuild _channelGuild;
         private SocketTextChannel _commonTextChannel;
+        private readonly string _token;
         private readonly CommandHandlerFactory _commandHandlerFactory;
 
         public event EventHandler<ChatBotLogMessage> Log;
         public event EventHandler<CommandRecivedEventArgs> OnCommandReceived;
 
-        public DiscordChatClient(CommandHandlerFactory commandHandlerFactory)
+        public DiscordChatClient(string token, CommandHandlerFactory commandHandlerFactory)
         {
             _client = new DiscordSocketClient();
+            _token = token;
             _commandHandlerFactory = commandHandlerFactory;
         }
 
@@ -29,10 +31,7 @@
         {
             await WireUpEventHandlers();
 
-            // Todo: move token
-            var token = "";
-
-            await _client.LoginAsync(TokenType.Bot, token);
+            await _client.LoginAsync(TokenType.Bot, _token);
             await _client.StartAsync();
         }
 

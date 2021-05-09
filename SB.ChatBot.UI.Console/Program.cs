@@ -4,6 +4,8 @@
     using SB.ChatBot.Infra.Discord;
     using SB.ChatBot.Core;
     using System.Threading.Tasks;
+    using Microsoft.Extensions.Configuration;
+    using System;
 
     class Program
     {
@@ -11,10 +13,16 @@
             => await new Program().MainAsync();
         private async Task MainAsync()
         {
+            var config = new ConfigurationBuilder()
+                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                .AddJsonFile("appsettings.json")
+                .AddUserSecrets<Program>()
+                .Build();
+
             var commandHandlerFactory = new CommandHandlerFactory();
             var clients = new IChatClient[]
             {
-                new DiscordChatClient(commandHandlerFactory)
+                new DiscordChatClient(config.GetSection("DiscordToken").Value, commandHandlerFactory)
             };
 
             foreach (var client in clients)
